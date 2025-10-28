@@ -51,13 +51,18 @@ BMAD-generated markdown documentation doesn't render properly in GitHub due to m
 
 **Example 1: Lists Render as Plain Text**
 
+Without a blank line after the bold header, bullets don't render as a list:
+
 ```markdown
-**Pain Points:**
-- Implementing authentication for each service
-- Managing service-to-service communication
+**Security Vulnerabilities:**
+- Each service implements its own authentication logic
+- No centralized authorization enforcement
+- Inconsistent security policies across services
 ```
 
-GitHub renders this as a single paragraph of text, not a formatted list.
+**GitHub Rendering:** All bullets flow together as a single paragraph of plain text, not a formatted list.
+
+**Why:** GitHub's markdown parser requires a blank line between a text element and a list to recognize the list formatting.
 
 **Example 2: Tables Don't Format**
 
@@ -71,6 +76,22 @@ GitHub renders this as plain text, not a table.
 **Example 3: Code Blocks Lack Context**
 
 Code blocks without blank lines before/after lose visual separation and proper rendering.
+
+### How the Fix Resolves This
+
+**After Fix - Proper Blank Lines:**
+
+```markdown
+**Security Vulnerabilities:**
+
+- Each service implements its own authentication logic
+- No centralized authorization enforcement
+- Inconsistent security policies across services
+```
+
+**GitHub Rendering:** Bullets now render as a properly formatted list with visual bullets and proper indentation.
+
+**The Difference:** One blank line (line 20 in the fixed version) makes the difference between broken and perfect rendering.
 
 ---
 
@@ -184,19 +205,38 @@ Add 6 markdown formatting rules to `bmad/core/tasks/workflow.xml` in the `<templ
 
 Visit [product-brief.md at dcf405f](https://github.com/jheyworth/bmad-markdown-formatting-test/blob/dcf405f/docs/product-brief.md#problem-statement) and observe:
 
+**Specific Example (Lines 16-20 in before-fix):**
+```
+Line 16: **Security Vulnerabilities:**
+Line 17: - Each service implements its own authentication logic
+         ↑ NO BLANK LINE - bullets render as plain text!
+```
+
+**What You'll See in GitHub:**
 - "Security Vulnerabilities:" followed by plain text instead of bullet list
-- "Pain Points:" not rendering as list
+- "Performance and Reliability Issues:" bullets also flow together
+- "Developer Friction:" bullets not rendering properly
 - Tables appear as plain text
 
 ### After Fix - Proper Rendering
 
 Visit [product-brief.md at 0b30d47](https://github.com/jheyworth/bmad-markdown-formatting-test/blob/0b30d47/docs/product-brief.md#problem-statement) and observe:
 
-- All bullet lists render with proper formatting
-- Tables display with borders and alignment
-- Code blocks have syntax highlighting
+**Specific Example (Lines 19-21 in after-fix):**
+```
+Line 19: **Security Vulnerabilities:**
+Line 20:
+Line 21: - Each service implements its own authentication logic
+         ↑ BLANK LINE ADDED - bullets now render properly!
+```
 
-**Recommendation:** Open both versions side-by-side in separate browser tabs to see the dramatic difference.
+**What You'll See in GitHub:**
+- All bullet lists render with proper formatting and visual bullets
+- Tables display with borders and alignment
+- Code blocks have proper spacing and syntax highlighting
+- Professional, publication-ready appearance
+
+**Recommendation:** Open both versions side-by-side in separate browser tabs to see the dramatic difference. Pay special attention to the "Problem Statement" section.
 
 ---
 
