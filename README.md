@@ -45,7 +45,19 @@ test-results/
 
 ## 🔍 The Problem
 
-BMAD-generated markdown documentation doesn't render properly in GitHub due to missing blank lines around lists, tables, and code blocks.
+BMAD-generated markdown documentation lacks blank lines around lists, tables, and code blocks, which violates CommonMark standards and causes rendering issues in strict markdown parsers.
+
+**Important Discovery:** GitHub's markdown renderer (GFM) is **lenient** and handles missing blank lines gracefully. However, many other tools do NOT:
+- ❌ Mac Markdown.app renders lists as plain text
+- ❌ Some IDE markdown previewers fail to render lists
+- ❌ Documentation generators may break
+- ❌ CommonMark-strict parsers reject the formatting
+
+**The Fix Provides:**
+1. **CommonMark Compliance** - Follows official markdown specification
+2. **Cross-Tool Compatibility** - Works in ALL markdown renderers
+3. **Best Practices** - Professional, maintainable documentation
+4. **Future-Proofing** - Won't break if GitHub tightens rendering rules
 
 ### Issues Found (Before Fix)
 
@@ -60,9 +72,11 @@ Without a blank line after the bold header, bullets don't render as a list:
 - Inconsistent security policies across services
 ```
 
-**GitHub Rendering:** All bullets flow together as a single paragraph of plain text, not a formatted list.
+**GitHub Rendering:** GitHub's lenient parser actually handles this acceptably, but it violates CommonMark spec.
 
-**Why:** GitHub's markdown parser requires a blank line between a text element and a list to recognize the list formatting.
+**Strict Parser Rendering (Mac Markdown.app, others):** All bullets flow together as a single paragraph of plain text, not a formatted list.
+
+**Why:** CommonMark specification requires a blank line between a paragraph and a list. GitHub is lenient, but not all tools are.
 
 **Example 2: Tables Don't Format**
 
@@ -89,9 +103,13 @@ Code blocks without blank lines before/after lose visual separation and proper r
 - Inconsistent security policies across services
 ```
 
-**GitHub Rendering:** Bullets now render as a properly formatted list with visual bullets and proper indentation.
+**GitHub Rendering:** Bullets render properly (just like the before version - GitHub is lenient).
 
-**The Difference:** One blank line (line 20 in the fixed version) makes the difference between broken and perfect rendering.
+**Strict Parser Rendering:** NOW bullets render as a properly formatted list with visual bullets and proper indentation.
+
+**The Difference:** One blank line (line 20 in the fixed version) makes the difference between:
+- ❌ Violating CommonMark spec + breaking in strict parsers
+- ✅ Following CommonMark spec + working in ALL parsers
 
 ---
 
@@ -201,22 +219,22 @@ Add 6 markdown formatting rules to `bmad/core/tasks/workflow.xml` in the `<templ
 
 ## 🎨 Visual Comparison
 
-### Before Fix - Lists as Plain Text
+### Before Fix - CommonMark Violation (But GitHub Handles It)
 
-Visit [product-brief.md at dcf405f](https://github.com/jheyworth/bmad-markdown-formatting-test/blob/dcf405f/docs/product-brief.md#problem-statement) and observe:
+Visit [product-brief.md at dcf405f](https://github.com/jheyworth/bmad-markdown-formatting-test/blob/dcf405f/docs/product-brief.md#problem-statement)
 
 **Specific Example (Lines 16-20 in before-fix):**
 ```
 Line 16: **Security Vulnerabilities:**
 Line 17: - Each service implements its own authentication logic
-         ↑ NO BLANK LINE - bullets render as plain text!
+         ↑ NO BLANK LINE - violates CommonMark spec!
 ```
 
 **What You'll See in GitHub:**
-- "Security Vulnerabilities:" followed by plain text instead of bullet list
-- "Performance and Reliability Issues:" bullets also flow together
-- "Developer Friction:" bullets not rendering properly
-- Tables appear as plain text
+- Lists actually render reasonably well (GitHub is lenient)
+- **BUT** this violates CommonMark specification
+- **AND** breaks in Mac Markdown.app and other strict parsers
+- **NOTE:** GitHub may appear fine, but the code is non-standard
 
 ### After Fix - Proper Rendering
 
@@ -231,12 +249,35 @@ Line 21: - Each service implements its own authentication logic
 ```
 
 **What You'll See in GitHub:**
-- All bullet lists render with proper formatting and visual bullets
-- Tables display with borders and alignment
-- Code blocks have proper spacing and syntax highlighting
-- Professional, publication-ready appearance
+- Lists render well (similar to before - GitHub is lenient)
+- **BUT** now it follows CommonMark specification
+- **AND** works in ALL markdown parsers (Mac app, IDEs, etc.)
+- Code is clean, professional, and standards-compliant
 
-**Recommendation:** Open both versions side-by-side in separate browser tabs to see the dramatic difference. Pay special attention to the "Problem Statement" section.
+**The Real Difference:**
+- You won't see dramatic visual changes in GitHub (it was lenient)
+- **BUT** open the files in Mac Markdown.app to see the problem
+- Before-fix: Lists render as plain text in strict parsers
+- After-fix: Lists render properly everywhere
+
+### Visual Proof: Mac Markdown.app Rendering
+
+**Screenshot showing broken rendering in Mac Markdown.app (before-fix version):**
+
+![Mac Markdown.app showing broken rendering](test-results/screenshots/mac-markdown-before-fix-broken.png)
+
+In this screenshot, you can see:
+- **"Acceptance Criteria:"** list renders as plain text, not bullets
+- **"Technical Notes:"** code block renders as inline text
+- **"Testing:"** list renders as plain text
+- Everything flows together as paragraphs instead of structured lists
+
+This is the **real problem** that GitHub's leniency hides. The fix ensures compatibility with ALL markdown parsers.
+
+**Recommendation:**
+1. View both versions in GitHub (they'll look similar)
+2. Then open in Mac Markdown.app or VSCode to see the real difference
+3. The fix is about **standards compliance**, not fixing GitHub
 
 ---
 
@@ -284,15 +325,27 @@ git diff dcf405f 0b30d47 docs/
 
 The markdown formatting fix is **fully effective** and **production-ready**.
 
-**Verification:**
+**What This Fix Does:**
 
-- ✅ All 6 formatting rules applied correctly
+- ✅ Makes BMAD output **CommonMark compliant**
+- ✅ Ensures compatibility with **ALL markdown parsers**
+- ✅ Fixes rendering in Mac Markdown.app and strict parsers
+- ✅ Follows industry best practices
+- ✅ Future-proofs documentation
 - ✅ Zero content changes (only formatting improved)
-- ✅ 100% of formatting issues resolved
-- ✅ Works across multiple workflow types
-- ✅ Scales to complex, real-world documents
 
-**Next Step:** Submit PR to BMAD-METHOD v6-alpha with this test evidence.
+**Important Clarification:**
+
+- GitHub's renderer is lenient and handles both versions acceptably
+- **BUT** the fix is still valuable for standards compliance and cross-tool compatibility
+- BMAD-generated docs should follow CommonMark spec, not rely on GitHub's leniency
+- Professional projects should use proper markdown formatting
+
+**Value Proposition:**
+
+This isn't about "fixing GitHub rendering" - it's about generating **professional, standards-compliant markdown** that works everywhere.
+
+**Next Step:** Submit PR to BMAD-METHOD v6-alpha with this accurate test evidence.
 
 ---
 
